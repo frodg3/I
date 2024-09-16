@@ -3,29 +3,30 @@ import time
 
 
 class Knight(threading.Thread):
-    total_enemies = 100  # Общее количество врагов
-    lock = threading.Lock()  # Блокировка для синхронизации
-
-    def __init__(self, name, power):
+    def __init__(self, name, power, total_enemies):
         super().__init__()
         self.name = name
         self.power = power
+        self.total_enemies = total_enemies  # Индивидуальное количество врагов
         self.days = 0
+        self.lock = threading.Lock()  # Блокировка для синхронизации
 
     def run(self):
         print(f"{self.name}, на нас напали!")
         while True:
-            with Knight.lock:  # Блокируем доступ к общему количеству врагов
-                if Knight.total_enemies <= 0:
+            with self.lock:  # Блокируем доступ к общему количеству врагов
+                if self.total_enemies <= 0:
                     break
 
                 # Увеличиваем количество дней сражения
                 self.days += 1
+                
                 # Уменьшаем количество врагов на силу рыцаря
-                Knight.total_enemies -= self.power
+                damage = min(self.power, self.total_enemies)
+                self.total_enemies -= damage
 
                 # Выводим информацию о сражении
-                remaining_enemies = max(Knight.total_enemies, 0)
+                remaining_enemies = max(self.total_enemies, 0)
                 day_word = "дней" if self.days > 1 else "день"
                 print(f"{self.name}, сражается {self.days} {day_word}..., осталось {remaining_enemies} воинов.")
 
@@ -36,9 +37,9 @@ class Knight(threading.Thread):
         print(f"{self.name} одержал победу спустя {self.days} {day_word}!")
 
 
-# Создание рыцарей
-first_knight = Knight('Sir Lancelot', 10)
-second_knight = Knight("Sir Galahad", 20)
+# Создание рыцарей с индивидуальным количеством врагов
+first_knight = Knight('Sir Lancelot', 10, 100)
+second_knight = Knight("Sir Galahad", 20, 80)
 
 # Запуск потоков
 first_knight.start()
@@ -50,3 +51,4 @@ second_knight.join()
 
 # Вывод строки об окончании битв
 print("Все битвы закончились!")
+
