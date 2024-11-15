@@ -7,7 +7,7 @@ import asyncio
 
 API_TOKEN = 'YOUR_TELEGRAM_BOT_TOKEN'
 
-bot = Bot(token= "7959603468:AAFXYwQhOLGNFXCKTaa5v-wskupio8A-Jbk")
+bot = Bot(token= )
 storage = MemoryStorage()
 dp = Dispatcher(bot, storage=storage)
 
